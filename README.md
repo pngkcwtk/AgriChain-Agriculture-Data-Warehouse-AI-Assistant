@@ -241,6 +241,8 @@ package-handoff.bat
 
 ## เอกสารอ้างอิงทางเทคนิค
 
+- [docs/Data_Warehouse_Architecture_Design_Document_AgriChain.pdf](docs/Data_Warehouse_Architecture_Design_Document_AgriChain.pdf): เอกสารการออกแบบสถาปัตยกรรม Data Warehouse ระบบห่วงโซ่อุปทานการเกษตร (AgriChain)
+- [docs/project report.pdf](docs/project%20report.pdf): รายงานสรุปโครงการ (Project Report)
 - [docs/rds_cloud_deployment_flow.md](docs/rds_cloud_deployment_flow.md): แผนผังและขั้นตอนการ Deploy บน AWS Cloud เต็มรูปแบบ
 - [docs/data_warehouse_context.md](docs/data_warehouse_context.md): รายละเอียดโครงสร้างตาราง Star Schema และ Data Dictionary
 - [docs/llm_providers.md](docs/llm_providers.md): การตั้งค่า Qwen (ผ่าน Groq API) และแนวทางการคัดเลือกโมเดล
