@@ -4,1034 +4,1131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="dashboardTitle">AgriChain - คลังข้อมูล</title>
+
+    <title>AgriChain - แดชบอร์ด</title>
+
     <style>
         * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont,
+            "Segoe UI", Roboto, "Noto Sans Thai", sans-serif;
+    }
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            background: #EDE8DC;
-            color: #1D1C14;
-            overflow-x: hidden;
-        }
+    html,
+    body {
+        width: 100%;
+        min-height: 100%;
+        background: #F8F3E7;
+        color: #1D1C14;
+    }
 
-        .app-container {
-            display: flex;
-            width: 100vw;
-            min-height: 100vh;
-        }
+    body {
+        overflow-x: hidden;
+    }
 
-        /* Sidebar */
+    /* =========================
+       APP CONTAINER (รักษาสภาพ Side-by-Side ตลอดเวลา)
+    ========================= */
+
+    .app-container {
+        display: flex;
+        flex-direction: row; /* บังคับวางข้างกันแนวตั้งเสมอ */
+        width: 100%;
+        min-height: 100vh;
+        background: #F8F3E7;
+    }
+
+    /* =========================
+       SIDEBAR
+    ========================= */
+
+    .sidebar {
+        width: 240px;
+        min-width: 240px;
+        height: 100vh;
+
+        position: sticky;
+        top: 0;
+
+        background: #F4F0E6;
+        border-right: 1px solid rgba(128, 85, 50, .10);
+
+        padding: 24px 16px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        z-index: 5;
+        flex-shrink: 0;
+        transition: width 0.3s ease, padding 0.3s ease;
+    }
+
+    .brand-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 28px;
+        padding: 0 8px;
+    }
+
+    .brand-logo {
+        width: 28px;
+        height: 28px;
+        color: #546341;
+        flex-shrink: 0;
+    }
+
+    .brand-title {
+        display: block; 
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #805532;
+        white-space: nowrap;
+    }
+
+    .nav-menu,
+    .sidebar-bottom {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+        list-style: none;
+    }
+
+    .nav-item {
+        width: 100%;
+    }
+
+    .nav-item a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        width: 100%;
+        height: 44px;
+
+        color: #546341;
+        text-decoration: none;
+        border-radius: 10px;
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .nav-item a .label {
+        display: inline-block; 
+        font-size: 0.95rem;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .nav-item a:hover {
+        background: rgba(215, 229, 182, 0.55);
+    }
+
+    .nav-item.active a {
+        background: #D7E5B6;
+        color: #546341;
+        font-weight: 700;
+    }
+
+    .nav-icon {
+        width: 22px;
+        height: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .nav-icon svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .sidebar-bottom {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid rgba(128, 85, 50, .10);
+    }
+
+    /* =========================
+       MAIN CONTENT
+    ========================= */
+
+    .main-content {
+        flex: 1;
+        min-width: 0;
+        min-height: 100vh;
+        padding: 36px 5% 42px;
+        background: #F8F3E7;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    /* =========================
+       HEADER & PANELS
+    ========================= */
+
+    .dashboard-header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 24px;
+    }
+
+    .header-title h1 {
+        color: #805532;
+        font-size: 30px;
+        line-height: 1.25;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .header-title p {
+        color: #5E674C;
+        font-size: .95rem;
+        line-height: 1.6;
+    }
+
+    .summary-grid {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .summary-card {
+        min-height: 148px;
+        padding: 18px 20px;
+        background: #D7E5B6;
+        border: 1px solid rgba(128, 85, 50, .06);
+        border-radius: 10px;
+        box-shadow: 0 4px 14px rgba(97, 58, 26, .06);
+        position: relative;
+    }
+
+    .summary-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 13px;
+    }
+
+    .summary-icon {
+        width: 32px;
+        height: 32px;
+        display: grid;
+        place-items: center;
+        background: #FFFFFF;
+        border-radius: 7px;
+        color: #805532;
+        font-weight: bold;
+    }
+
+    .summary-icon svg,
+    .summary-icon i {
+        width: 18px;
+        height: 18px;
+    }
+
+    .summary-label {
+        color: #68704F;
+        font-size: 15px;
+        margin-bottom: 2px;
+    }
+
+    .summary-value {
+        color: #596440;
+        font-size: 28px;
+        line-height: 1.15;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .summary-description {
+        color: #7A8069;
+        font-size: 12px;
+    }
+
+    .panel {
+        background: #FFFFFF;
+        border: 1px solid rgba(128, 85, 50, .08);
+        border-radius: 10px;
+        box-shadow: 0 4px 16px rgba(97, 58, 26, .06);
+        overflow: hidden;
+    }
+
+    .panel-header {
+        min-height: 68px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        border-bottom: 1px solid #EEE9DE;
+    }
+
+    .panel-title h2 {
+        color: #3F3F31;
+        font-size: 18px;
+        line-height: 1.3;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .panel-title p {
+        color: #8A887D;
+        font-size: 12px;
+    }
+
+    .language-switch {
+        position: fixed;
+        right: 24px;
+        top: 20px;
+        display: flex;
+        background: #F8F3E7;
+        border: 1px solid rgba(128, 85, 50, .2);
+        border-radius: 20px;
+        padding: 3px;
+        z-index: 100;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .language-switch button {
+        border: 0;
+        background: transparent;
+        padding: 4px 12px;
+        border-radius: 16px;
+        cursor: pointer;
+        color: #546341;
+        font-weight: 500;
+    }
+
+    .language-switch .active {
+        background: #D7E5B6;
+        color: #805532;
+        font-weight: 700;
+    }
+
+    .filter-panel {
+        background: #FFFFFF;
+        border: 1px solid rgba(128, 85, 50, .08);
+        border-radius: 10px;
+        padding: 18px 20px;
+        box-shadow: 0 4px 16px rgba(97, 58, 26, .06);
+    }
+
+    .filter-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .filter-title h2 {
+        color: #3F3F31;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .filter-title span {
+        color: #8A887D;
+        font-size: 13px;
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .filter-group > span {
+        color: #68704F;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .filter-group select {
+        width: 100%;
+        height: 38px;
+        padding: 0 12px;
+        background: #FBF9F4;
+        border: 1px solid #DED7C7;
+        border-radius: 7px;
+        color: #55574A;
+        font-size: 13px;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .dashboard-section {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 16px;
+    }
+
+    .section-heading h2 {
+        color: #805532;
+        font-size: 21px;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .section-heading p {
+        color: #8A887D;
+        font-size: 14px;
+    }
+
+    .section-badge {
+        padding: 6px 10px;
+        background: #F2F4E9;
+        color: #596440;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .chart-grid {
+        display: grid;
+        gap: 16px;
+    }
+
+    .chart-grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .chart-card {
+        min-width: 0;
+    }
+
+    .chart-box {
+        height: 250px;
+        padding: 16px;
+        position: relative;
+    }
+
+    .donut-box {
+        padding: 16px 20px;
+    }
+
+    .chart-box canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* =========================
+       RESPONSIVE DESIGN
+    ========================= */
+
+    /* ย่อแถบข้าง Sidebar เมื่อหน้าจอแคบกว่า 768px */
+    @media (max-width: 768px) {
         .sidebar {
-            width: 250px;
-            min-width: 250px;
-            background: #F4F0E6;
-            border-right: 1px solid rgba(128, 85, 50, .10);
-            padding: 24px 16px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.3s ease;
-            z-index: 5;
+            width: 72px;
+            min-width: 72px;
+            padding: 24px 8px;
+            align-items: center;
         }
 
         .brand-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-            padding-left: 6px;
+            justify-content: center;
+            padding: 0;
         }
 
-        .brand-logo {
-            width: 26px;
-            height: 26px;
-            color: #546341;
-            flex-shrink: 0;
-        }
-
-        .brand-title {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #805532;
-            line-height: 1.1;
-        }
-
-        .nav-menu, .sidebar-bottom {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            list-style: none;
+        .brand-title,
+        .nav-item a .label {
+            display: none !important; /* ซ่อนข้อความเพื่อให้เหลือแต่ไอคอน */
         }
 
         .nav-item a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            color: #546341;
-            text-decoration: none;
-            font-size: .9rem;
-            font-weight: 500;
-            border-radius: 8px;
-            white-space: nowrap;
-            transition: background 0.2s;
-        }
-
-        .nav-item.active a {
-            background: #D7E5B6;
-            color: #546341;
-            font-weight: 600;
-        }
-
-        .nav-item a:hover {
-            background: rgba(215, 229, 182, .55);
-        }
-
-        .nav-icon {
-            width: 20px;
-            height: 20px;
-            display: inline-flex;
-            align-items: center;
             justify-content: center;
-            flex-shrink: 0;
+            padding: 0;
         }
+    }
 
-        .nav-icon svg {
-            width: 18px;
-            height: 18px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 1.8;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .sidebar-bottom {
-            border-top: 1px solid rgba(128, 85, 50, .10);
-            padding-top: 16px;
-        }
-
-        /* Main Area */
+    @media (max-width: 1100px) {
         .main-content {
-            flex: 1;
-            min-width: 0;
-            padding: 36px 5%;
-            background: #F8F3E7;
-            display: flex;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+
+        .chart-grid.three {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 900px) {
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .chart-grid.three {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard-header {
+            padding-right: 70px;
+        }
+
+        .section-heading {
+            align-items: flex-start;
             flex-direction: column;
-            gap: 24px;
-            overflow-y: auto;
-            width: 100%;
+        }
+    }
+
+    @media (max-width: 560px) {
+        .main-content {
+            padding: 20px 12px;
         }
 
-        .page-header h1 {
-            font-size: 1.8rem;
-            line-height: 1.2;
-            color: #805532;
-            margin-bottom: 6px;
-        }
-
-        .page-header p {
-            font-size: .95rem;
-            color: #5E674C;
-        }
-
-        /* Auto-Upload Dropzone */
-        .upload-card {
-            width: 100%;
-            min-height: 280px;
-            padding: 40px 24px;
-            background: #E8EED2;
-            border: 2px dashed #A5B68D;
-            border-radius: 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-
-        .upload-card.dragover {
-            background: #dce7be;
-            border-color: #805532;
-            transform: scale(0.995);
-        }
-
-        .upload-icon-box {
-            width: 72px;
-            height: 72px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #8B5A35;
-        }
-
-        .upload-icon-box svg {
-            width: 58px;
-            height: 58px;
-            fill: none;
-            stroke: #8B5A35;
-            stroke-width: 5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .upload-title {
-            margin-bottom: 6px;
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #8B5A35;
-        }
-
-        .upload-subtitle {
-            font-size: .92rem;
-            color: #5E674C;
-        }
-
-        .file-input-hidden {
-            display: none;
-        }
-
-        /* Recent Card */
-        .recent-card {
-            width: 100%;
-            padding: 24px 28px;
-            background: #F8F3E7;
-            border: 1px solid rgba(128, 85, 50, .12);
-            border-radius: 16px;
-        }
-
-        .recent-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 18px;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .recent-header h3 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #805532;
-            margin: 0;
-        }
-
-        .search-box {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .search-box input {
-            padding: 6px 12px 6px 34px;
-            border: 1px solid rgba(128, 85, 50, 0.25);
-            border-radius: 8px;
-            background-color: #F8F3E7;
-            color: #1D1C14;
-            font-size: 0.85rem;
-            outline: none;
-            transition: all 0.2s ease;
-            width: 220px;
-        }
-
-        .search-box input:focus {
-            border-color: #805532;
-            box-shadow: 0 0 0 2px rgba(128, 85, 50, 0.15);
-            background-color: #FFFFFF;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 10px;
-            width: 16px;
-            height: 16px;
-            fill: none;
-            stroke: #805532;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            pointer-events: none;
-        }
-
-        .table-container {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        .data-table {
-            width: 100%;
-            min-width: 600px;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: .88rem;
-        }
-
-        .data-table th {
-            padding: 10px 8px;
-            color: #546341;
-            font-size: .85rem;
-            font-weight: 600;
-            border-bottom: 1px solid rgba(84, 99, 65, .16);
-        }
-
-        .data-table td {
-            padding: 14px 8px;
-            color: #4E5841;
-            border-bottom: 1px solid rgba(84, 99, 65, .08);
-        }
-
-        .file-icon {
-            width: 18px;
-            height: 18px;
-            display: inline-block;
-            vertical-align: -3px;
-            margin-right: 8px;
-            color: #8B5A35;
-        }
-
-        .file-icon svg {
-            width: 100%;
-            height: 100%;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2;
-        }
-
-        /* สไตล์ชื่อไฟล์แบบกดได้ */
-        .file-link {
-            color: #805532;
-            font-weight: 600;
-            text-decoration: underline;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .file-link:hover {
-            color: #546341;
-        }
-
-        .badge {
-            padding: 5px 12px;
-            border-radius: 14px;
-            font-size: .75rem;
-            display: inline-block;
-            font-weight: 600;
-        }
-
-        .badge-success { background: #D7E5B6; color: #3c4d28; }
-        .badge-progress { background: #F1DFA5; color: #6d5012; }
-        .badge-error { background: #F2B4B4; color: #7C2222; }
-
-        .btn-delete, .btn-preview, .btn-action {
-            background-color: #F8F3E7;
-            color: #4A5835;
-            border: none;
-            padding: 6px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s, transform 0.1s;
-            flex-shrink: 0;
-        }
-
-        .btn-delete:hover, .btn-preview:hover, .btn-action:hover {
-            background-color: #e8e0ce;
-            transform: scale(1.05);
-        }
-
-        .btn-preview {
-            color: #805532;
-        }
-
-        .btn-preview:hover {
-            color: #546341;
-        }
-
-        .btn-delete svg, .btn-preview svg, .btn-action svg {
-            width: 18px;
-            height: 18px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        /* Language Switch */
         .language-switch {
-            position: fixed;
-            right: 24px;
-            top: 20px;
-            display: flex;
-            background: #F8F3E7;
-            border: 1px solid rgba(128, 85, 50, .2);
-            border-radius: 20px;
-            padding: 3px;
-            z-index: 10;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            right: 12px;
+            top: 12px;
         }
 
-        .language-switch button {
-            border: 0;
-            background: transparent;
-            padding: 4px 12px;
-            border-radius: 16px;
-            cursor: pointer;
-            color: #546341;
-            font-weight: 500;
+        .summary-value {
+            font-size: 25px;
         }
-
-        .language-switch .active {
-            background: #D7E5B6;
-            color: #805532;
-            font-weight: 700;
-        }
-
-        /* Modal Pop-up */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(3px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: #F8F3E7;
-            width: 90%;
-            max-width: 850px;
-            max-height: 80vh;
-            border-radius: 16px;
-            border: 1px solid rgba(128, 85, 50, 0.2);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            animation: modalFadeIn 0.2s ease-out;
-        }
-
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .modal-header {
-            padding: 16px 20px;
-            background: #E8EED2;
-            border-bottom: 1px solid rgba(128, 85, 50, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .modal-header h3 {
-            font-size: 1.1rem;
-            color: #805532;
-            word-break: break-all;
-        }
-
-        .modal-close {
-            background: transparent;
-            border: none;
-            font-size: 1.8rem;
-            line-height: 1;
-            color: #805532;
-            cursor: pointer;
-            padding: 0 4px;
-        }
-
-        .modal-body {
-            padding: 20px;
-            overflow-y: auto;
-            overflow-x: auto;
-        }
-
-        .csv-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-        }
-
-        .csv-table th, .csv-table td {
-            padding: 8px 12px;
-            border: 1px solid rgba(128, 85, 50, 0.15);
-            text-align: left;
-        }
-
-        .csv-table th {
-            background-color: #D7E5B6;
-            color: #3c4d28;
-            font-weight: 600;
-        }
-
-        .csv-table tr:nth-child(even) {
-            background-color: rgba(215, 229, 182, 0.2);
-        }
-
-        @media(max-width: 900px) {
-            .sidebar {
-                width: 72px;
-                min-width: 72px;
-                padding: 18px 8px;
-                align-items: center;
-            }
-
-            .brand-title, .nav-item .label {
-                display: none;
-            }
-
-            .brand-header {
-                padding-left: 0;
-                justify-content: center;
-            }
-
-            .nav-item a {
-                justify-content: center;
-                padding: 10px 0;
-            }
-
-            .main-content {
-                padding: 24px 20px;
-            }
-        }
-
-        @media(max-width: 580px) {
-            .language-switch {
-                top: 10px;
-                right: 10px;
-            }
-            .search-box input {
-                width: 100%;
-            }
-        }
+    }
     </style>
 </head>
 
 <body>
-    <div class="language-switch">
-        <button id="thBtn" class="active">ไทย</button>
-        <button id="enBtn">EN</button>
-    </div>
 
     <div class="app-container">
+
+        <!-- =========================
+             SIDEBAR
+        ========================= -->
         <aside class="sidebar">
+
             <div>
                 <div class="brand-header">
                     <svg class="brand-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 4C12 4 5 8 3 20c8-1 15-6 18-16Z" />
                         <path d="M4 19c4-5 8-8 14-11" />
                     </svg>
-                    <div class="brand-title">AgriChain</div>
+
+                    <div class="brand-title">
+                        AgriChain
+                    </div>
                 </div>
+
                 <ul class="nav-menu">
-                    <li class="nav-item"><a href="#">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg></span>
-                        <span class="label" data-i18n="dashboard">Dashboard</span>
-                    </a></li>
-                    <li class="nav-item active"><a href="/dashboard.html">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 19V9"/><path d="M12 19V5"/><path d="M19 19v-7"/></svg></span>
-                        <span class="label" data-i18n="supply">คลังข้อมูล</span>
-                    </a></li>
-                    <li class="nav-item"><a href="/agent.html">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="13" rx="3"/><path d="M9 7V5h6v2"/><circle cx="9" cy="13" r="1"/><circle cx="15" cy="13" r="1"/><path d="M9 17h6"/></svg></span>
-                        <span class="label" data-i18n="ai">ผู้ช่วย AI</span>
-                    </a></li>
+                    <!-- DASHBOARD ACTIVE -->
+                    <li class="nav-item active">
+                        <a href="dashboard.html" title="แดชบอร์ด">
+                            <span class="nav-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <rect x="3" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="3" width="7" height="7"></rect>
+                                    <rect x="3" y="14" width="7" height="7"></rect>
+                                    <rect x="14" y="14" width="7" height="7"></rect>
+                                </svg>
+                            </span>
+                            <span class="label" data-i18n="แดชบอร์ด">แดชบอร์ด</span>
+                        </a>
+                    </li>
+
+                    <!-- INVENTORY -->
+                    <li class="nav-item">
+                        <a href="inventory.html" title="คลังสินค้า">
+                            <span class="nav-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M4 19V10"></path>
+                                    <path d="M10 19V5"></path>
+                                    <path d="M16 19v-7"></path>
+                                    <path d="M22 19V8"></path>
+                                </svg>
+                            </span>
+                            <span class="label" data-i18n="คลังสินค้า">คลังสินค้า</span>
+                        </a>
+                    </li>
+
+                    <!-- AI -->
+                    <li class="nav-item">
+                        <a href="agent.html" title="ผู้ช่วย AI">
+                            <span class="nav-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <rect x="5" y="7" width="14" height="12" rx="3"></rect>
+                                    <path d="M9 7V4"></path>
+                                    <path d="M15 7V4"></path>
+                                    <circle cx="9" cy="13" r="1"></circle>
+                                    <circle cx="15" cy="13" r="1"></circle>
+                                    <path d="M9 16h6"></path>
+                                </svg>
+                            </span>
+                            <span class="label" data-i18n="ผู้ช่วย AI">ผู้ช่วย AI</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
+
             <ul class="sidebar-bottom">
                 <li class="nav-item">
-                    <a href="index.html" id="accountBtn">
-                        <span class="nav-icon">👤</span>
-                        <span class="label" data-i18n="account">บัญชี / ออกจากระบบ</span>
+                    <a href="index.html" title="บัญชี / ออกจากระบบ">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="4"></circle>
+                                <path d="M4 21c0-4 3-7 8-7s8 3 8 7"></path>
+                            </svg>
+                        </span>
+                        <span class="label" data-i18n="บัญชี / ออกจากระบบ">บัญชี / ออกจากระบบ</span>
                     </a>
                 </li>
             </ul>
+
         </aside>
 
+        <!-- =========================
+             MAIN DASHBOARD
+        ========================= -->
         <main class="main-content">
-            <header class="page-header">
-                <h1 data-i18n="uploadCenter">คลังข้อมูล</h1>
-                <p data-i18n="uploadDesc">นำเข้าและประมวลผลชุดข้อมูลห่วงโซ่อุปทานอย่างปลอดภัย</p>
+
+            <header class="dashboard-header">
+                <div class="header-title">
+                    <h1 data-i18n="แดชบอร์ดวิเคราะห์">แดชบอร์ดวิเคราะห์</h1>
+                    <p data-i18n="ภาพรวมการรับซื้อ การขาย และการจัดส่งของสหกรณ์">
+                        ภาพรวมการรับซื้อ การขาย และการจัดส่งของสหกรณ์
+                    </p>
+                </div>
             </header>
 
-            <section class="upload-card" id="dropZone">
-                <input type="file" id="fileInput" class="file-input-hidden" accept=".csv" multiple />
-                <div class="upload-icon-box" aria-hidden="true">
-                    <svg viewBox="0 0 64 64">
-                        <path d="M16 7h25l12 12v38H16z"></path>
-                        <path d="M41 7v14h12"></path>
-                        <path d="M32 48V29"></path>
-                        <path d="M23 38l9-9 9 9"></path>
-                    </svg>
+            <!-- GLOBAL FILTERS -->
+            <section class="filter-panel">
+                <div class="filter-title">
+                    <h2 data-i18n="ตัวกรองข้อมูล">ตัวกรองข้อมูล</h2>
+                    <span data-i18n="กำหนดขอบเขตข้อมูลสำหรับทุก Dashboard">กำหนดขอบเขตข้อมูลสำหรับทุก Dashboard</span>
                 </div>
-                <h2 class="upload-title" data-i18n="drag">ลากและวางไฟล์ CSV ที่นี่เพื่ออัปโหลดทันที</h2>
-                <p class="upload-subtitle" data-i18n="browse">หรือคลิกพื้นที่นี้เพื่อเลือกไฟล์จากคอมพิวเตอร์ของคุณ</p>
+
+                <div class="filter-grid">
+                    <label class="filter-group">
+                        <span data-i18n="ช่วงเวลา">ช่วงเวลา</span>
+                        <select id="filterDate">
+                            <option value="month" data-i18n="รายเดือน">รายเดือน</option>
+                            <option value="quarter" data-i18n="รายไตรมาส">รายไตรมาส</option>
+                            <option value="year" data-i18n="รายปี">รายปี</option>
+                        </select>
+                    </label>
+
+                    <label class="filter-group">
+                        <span data-i18n="คลังสินค้า / ไซโล">คลังสินค้า / ไซโล</span>
+                        <select id="filterWarehouse">
+                            <option value="all" data-i18n="ทุกคลังสินค้า">ทุกคลังสินค้า</option>
+                        </select>
+                    </label>
+
+                    <label class="filter-group">
+                        <span data-i18n="หมวดหมู่ผลผลิต">หมวดหมู่ผลผลิต</span>
+                        <select id="filterCrop">
+                            <option value="all" data-i18n="ทุกหมวดหมู่">ทุกหมวดหมู่</option>
+                            <option value="grain" data-i18n="ธัญพืช">ธัญพืช</option>
+                            <option value="fruit" data-i18n="ผลไม้">ผลไม้</option>
+                            <option value="vegetable" data-i18n="ผัก">ผัก</option>
+                        </select>
+                    </label>
+                </div>
             </section>
 
-            <section class="recent-card">
-                <div class="recent-header">
-                    <h3 data-i18n="recent">อัปโหลดล่าสุด</h3>
-                    <div class="search-box">
-                        <svg class="search-icon" viewBox="0 0 24 24">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                        <input type="text" id="fileSearchInput" placeholder="ค้นหาชื่อไฟล์..." data-i18n-placeholder="searchPlaceholder" onkeyup="filterFiles()" />
+            <!-- HARVEST DASHBOARD -->
+            <section class="dashboard-section">
+                <div class="section-heading">
+                    <div>
+                        <h2 data-i18n="Harvest Dashboard">Harvest Dashboard</h2>
+                        <p data-i18n="แดชบอร์ดวิเคราะห์การรับซื้อผลผลิต">
+                            แดชบอร์ดวิเคราะห์การรับซื้อผลผลิต
+                        </p>
                     </div>
+                    <span class="section-badge" data-i18n="ฝ่ายจัดซื้อ / ผู้บริหาร">ฝ่ายจัดซื้อ / ผู้บริหาร</span>
                 </div>
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th data-i18n="filename">ชื่อไฟล์</th>
-                                <th data-i18n="size">ขนาด</th>
-                                <th data-i18n="status">สถานะ</th>
-                                <th data-i18n="time">เวลา</th>
-                            </tr>
-                        </thead>
-                        <tbody id="recentTableBody">
-                        </tbody>
-                    </table>
+
+                <div class="summary-grid">
+                    <article class="summary-card">
+                        <div class="summary-top">
+                            <div class="summary-icon">฿</div>
+                        </div>
+                        <div class="summary-label" data-i18n="ยอดเงินรับซื้อรวม">ยอดเงินรับซื้อรวม</div>
+                        <div class="summary-value" id="harvestAmount">฿0</div>
+                        <div class="summary-description" data-i18n="ต้นทุนผลผลิตที่จ่ายให้เกษตรกร">ต้นทุนผลผลิตที่จ่ายให้เกษตรกร</div>
+                    </article>
+
+                    <article class="summary-card">
+                        <div class="summary-top">
+                            <div class="summary-icon">KG</div>
+                        </div>
+                        <div class="summary-label" data-i18n="ปริมาณรับซื้อรวม">ปริมาณรับซื้อรวม</div>
+                        <div class="summary-value" id="harvestQuantity">0 t</div>
+                        <div class="summary-description" data-i18n="น้ำหนักผลผลิตที่รับเข้าคลัง">น้ำหนักผลผลิตที่รับเข้าคลัง</div>
+                    </article>
+
+                    <article class="summary-card">
+                        <div class="summary-top">
+                            <div class="summary-icon">AVG</div>
+                        </div>
+                        <div class="summary-label" data-i18n="ราคารับซื้อเฉลี่ยต่อกิโลกรัม">ราคารับซื้อเฉลี่ยต่อกิโลกรัม</div>
+                        <div class="summary-value" id="avgHarvestPrice">฿0</div>
+                        <div class="summary-description" data-i18n="ราคาเฉลี่ยที่สหกรณ์รับซื้อจากเกษตรกร">ราคาเฉลี่ยที่สหกรณ์รับซื้อจากเกษตรกร</div>
+                    </article>
+                </div>
+
+                <div class="chart-grid three">
+                    <article class="panel chart-card">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <h2 data-i18n="แนวโน้มการรับซื้อรายเดือน">แนวโน้มการรับซื้อรายเดือน</h2>
+                                <p data-i18n="ปริมาณรับซื้อเทียบกับเดือน">ปริมาณรับซื้อเทียบกับเดือน</p>
+                            </div>
+                        </div>
+                        <div class="chart-box"><canvas id="harvestTrendChart"></canvas></div>
+                    </article>
+
+                    <article class="panel chart-card">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <h2 data-i18n="ปริมาณรับซื้อตามหมวดหมู่">ปริมาณรับซื้อตามหมวดหมู่</h2>
+                                <p data-i18n="สัดส่วนผลผลิตที่รับเข้าระบบ">สัดส่วนผลผลิตที่รับเข้าระบบ</p>
+                            </div>
+                        </div>
+                        <div class="chart-box donut-box"><canvas id="harvestCropChart"></canvas></div>
+                    </article>
+
+                    <article class="panel chart-card">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <h2 data-i18n="Top 5 สหกรณ์">Top 5 สหกรณ์</h2>
+                                <p data-i18n="สหกรณ์ที่ส่งมอบผลผลิตมากที่สุด">สหกรณ์ที่ส่งมอบผลผลิตมากที่สุด</p>
+                            </div>
+                        </div>
+                        <div class="chart-box"><canvas id="topCooperativesChart"></canvas></div>
+                    </article>
                 </div>
             </section>
+
+            <!-- SALES & SHIPMENT DASHBOARD -->
+            <section class="dashboard-section">
+                <div class="section-heading">
+                    <div>
+                        <h2 data-i18n="Sales & Shipment Dashboard">Sales & Shipment Dashboard</h2>
+                        <p data-i18n="แดชบอร์ดวิเคราะห์การขายและการจัดส่ง">
+                            แดชบอร์ดวิเคราะห์การขายและการจัดส่ง
+                        </p>
+                    </div>
+                    <span class="section-badge" data-i18n="ฝ่ายขาย / โลจิสติกส์">ฝ่ายขาย / โลจิสติกส์</span>
+                </div>
+
+                <div class="summary-grid">
+                    <article class="summary-card">
+                        <div class="summary-top"><div class="summary-icon">฿</div></div>
+                        <div class="summary-label" data-i18n="ยอดขายสุทธิ">ยอดขายสุทธิ</div>
+                        <div class="summary-value" id="salesAmount">฿0</div>
+                        <div class="summary-description" data-i18n="ยอดขายหลังหักส่วนลด">ยอดขายหลังหักส่วนลด</div>
+                    </article>
+
+                    <article class="summary-card">
+                        <div class="summary-top"><div class="summary-icon">KG</div></div>
+                        <div class="summary-label" data-i18n="ปริมาณผลผลิตที่ขายได้">ปริมาณผลผลิตที่ขายได้</div>
+                        <div class="summary-value" id="salesQuantity">0 t</div>
+                        <div class="summary-description" data-i18n="น้ำหนักผลผลิตที่ระบายออกจากคลัง">น้ำหนักผลผลิตที่ระบายออกจากคลัง</div>
+                    </article>
+
+                    <article class="summary-card">
+                        <div class="summary-top">
+                            <div class="summary-icon"><i data-lucide="truck"></i></div>
+                        </div>
+                        <div class="summary-label" data-i18n="ค่าจัดส่งรวม">ค่าจัดส่งรวม</div>
+                        <div class="summary-value" id="shippingCost">฿0</div>
+                        <div class="summary-description" data-i18n="ค่าใช้จ่ายรวมด้านการขนส่ง">ค่าใช้จ่ายรวมด้านการขนส่ง</div>
+                    </article>
+                </div>
+
+                <div class="chart-grid three">
+                    <article class="panel chart-card">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <h2 data-i18n="แนวโน้มยอดขายรายเดือน">แนวโน้มยอดขายรายเดือน</h2>
+                                <p data-i18n="ยอดขายสุทธิในแต่ละเดือน">ยอดขายสุทธิในแต่ละเดือน</p>
+                            </div>
+                        </div>
+                        <div class="chart-box"><canvas id="salesTrendChart"></canvas></div>
+                    </article>
+
+                    <article class="panel chart-card">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <h2 data-i18n="ยอดขายตามประเภทลูกค้า">ยอดขายตามประเภทลูกค้า</h2>
+                                <p data-i18n="สัดส่วนรายได้แยกตามกลุ่มลูกค้า">สัดส่วนรายได้แยกตามกลุ่มลูกค้า</p>
+                            </div>
+                        </div>
+                        <div class="chart-box donut-box"><canvas id="customerTypeChart"></canvas></div>
+                    </article>
+
+                    <article class="panel chart-card">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <h2 data-i18n="สถานะการจัดส่งและรูปแบบขนส่ง">สถานะการจัดส่งและรูปแบบขนส่ง</h2>
+                                <p data-i18n="จำนวนรอบจัดส่งแยกตามรูปแบบและสถานะ">จำนวนรอบจัดส่งแยกตามรูปแบบและสถานะ</p>
+                            </div>
+                        </div>
+                        <div class="chart-box"><canvas id="shipmentStatusChart"></canvas></div>
+                    </article>
+                </div>
+            </section>
+
         </main>
+
     </div>
 
-    <!-- Modal สำหรับแสดงข้อมูลใน CSV -->
-    <div id="fileModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle">ชื่อไฟล์</h3>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body" id="modalBody">
-            </div>
-        </div>
+    <!-- LANGUAGE SWITCH -->
+    <div class="language-switch">
+        <button class="active" data-lang="th">ไทย</button>
+        <button data-lang="en">EN</button>
     </div>
- 
-    <script src="i18next.min.js"></script>
-    <script src="translations.js"></script>
+
+    <!-- EXTERNAL LIBRARIES -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <script>
-        const previewIconSvg = `
-            <svg viewBox="0 0 24 24">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                <circle cx="12" cy="12" r="3"/>
-            </svg>
-        `;
+    const translations = {
+        "แดชบอร์ด": "Dashboard",
+        "คลังสินค้า": "Inventory",
+        "ผู้ช่วย AI": "AI Assistant",
+        "บัญชี / ออกจากระบบ": "Account / Sign Out",
+        "แดชบอร์ดวิเคราะห์": "Analytics Dashboard",
+        "ภาพรวมการรับซื้อ การขาย และการจัดส่งของสหกรณ์": "Overview of cooperative harvesting, sales and shipment",
+        "ตัวกรองข้อมูล": "Global Filters",
+        "กำหนดขอบเขตข้อมูลสำหรับทุก Dashboard": "Set the data scope for all dashboards",
+        "ช่วงเวลา": "Date Range",
+        "รายเดือน": "Monthly",
+        "รายไตรมาส": "Quarterly",
+        "รายปี": "Yearly",
+        "คลังสินค้า / ไซโล": "Warehouse / Silo",
+        "ทุกคลังสินค้า": "All Warehouses",
+        "หมวดหมู่ผลผลิต": "Crop Category",
+        "ทุกหมวดหมู่": "All Categories",
+        "ธัญพืช": "Grains",
+        "ผลไม้": "Fruits",
+        "ผัก": "Vegetables",
+        "ฝ่ายจัดซื้อ / ผู้บริหาร": "Procurement / Management",
+        "ฝ่ายขาย / โลจิสติกส์": "Sales / Logistics",
+        "Harvest Dashboard": "Harvest Dashboard",
+        "แดชบอร์ดวิเคราะห์การรับซื้อผลผลิต": "Harvest Analytics Dashboard",
+        "ยอดเงินรับซื้อรวม": "Total Harvest Amount",
+        "ต้นทุนผลผลิตที่จ่ายให้เกษตรกร": "Cost paid to farmers for harvested products",
+        "ปริมาณรับซื้อรวม": "Total Quantity Harvested",
+        "น้ำหนักผลผลิตที่รับเข้าคลัง": "Weight of products received into warehouses",
+        "ราคารับซื้อเฉลี่ยต่อกิโลกรัม": "Average Price per Kg",
+        "ราคาเฉลี่ยที่สหกรณ์รับซื้อจากเกษตรกร": "Average price paid by the cooperative to farmers",
+        "แนวโน้มการรับซื้อรายเดือน": "Harvest Trend by Month",
+        "ปริมาณรับซื้อเทียบกับเดือน": "Harvest quantity by month",
+        "ปริมาณรับซื้อตามหมวดหมู่": "Harvest Amount by Crop Category",
+        "สัดส่วนผลผลิตที่รับเข้าระบบ": "Share of harvested products",
+        "Top 5 สหกรณ์": "Top 5 Cooperatives",
+        "สหกรณ์ที่ส่งมอบผลผลิตมากที่สุด": "Cooperatives with the highest deliveries",
+        "Sales & Shipment Dashboard": "Sales & Shipment Dashboard",
+        "แดชบอร์ดวิเคราะห์การขายและการจัดส่ง": "Sales & Shipment Analytics Dashboard",
+        "ยอดขายสุทธิ": "Total Sales Amount",
+        "ยอดขายหลังหักส่วนลด": "Net sales after discounts",
+        "ปริมาณผลผลิตที่ขายได้": "Total Quantity Sold",
+        "น้ำหนักผลผลิตที่ระบายออกจากคลัง": "Weight of products sold from warehouses",
+        "ค่าจัดส่งรวม": "Total Shipping Cost",
+        "ค่าใช้จ่ายรวมด้านการขนส่ง": "Total transportation cost",
+        "แนวโน้มยอดขายรายเดือน": "Sales Trend by Month",
+        "ยอดขายสุทธิในแต่ละเดือน": "Net sales by month",
+        "ยอดขายตามประเภทลูกค้า": "Sales by Customer Type",
+        "สัดส่วนรายได้แยกตามกลุ่มลูกค้า": "Revenue share by customer group",
+        "สถานะการจัดส่งและรูปแบบขนส่ง": "Shipment Status & Transport Mode",
+        "จำนวนรอบจัดส่งแยกตามรูปแบบและสถานะ": "Shipment count by transport mode and status"
+    };
 
-        const trashIconSvg = `
-            <svg viewBox="0 0 24 24">
-                <path d="M3 6h18"/>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                <line x1="10" y1="11" x2="10" y2="17"/>
-                <line x1="14" y1="11" x2="14" y2="17"/>
-            </svg>
-        `;
+    let currentLanguage = localStorage.getItem("agri_language") || "th";
+    let charts = {};
 
-        const dropZone = document.getElementById("dropZone");
-        const fileInput = document.getElementById("fileInput");
-        const recentTableBody = document.getElementById("recentTableBody");
+    function applyLanguage(lang, persist = true) {
+        currentLanguage = lang === "en" ? "en" : "th";
 
-        dropZone.addEventListener("click", () => fileInput.click());
-
-        fileInput.addEventListener("change", (e) => {
-            if (e.target.files.length > 0) {
-                processFiles(Array.from(e.target.files));
-                fileInput.value = '';
-            }
+        document.querySelectorAll("[data-i18n]").forEach(el => {
+            const key = el.dataset.i18n;
+            el.textContent = currentLanguage === "en"
+                ? (translations[key] || key)
+                : key;
         });
 
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                dropZone.classList.add('dragover');
-            }, false);
+        document.querySelectorAll(".language-switch button").forEach(btn => {
+            btn.classList.toggle("active", btn.dataset.lang === currentLanguage);
         });
 
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                dropZone.classList.remove('dragover');
-            }, false);
+        document.documentElement.lang = currentLanguage;
+
+        if (persist) {
+            localStorage.setItem("agri_language", currentLanguage);
+            window.dispatchEvent(new CustomEvent("appLanguageChanged", {
+                detail: { language: currentLanguage }
+            }));
+        }
+
+        updateChartsLanguage();
+    }
+
+    document.querySelectorAll(".language-switch button").forEach(btn => {
+        btn.addEventListener("click", () => {
+            applyLanguage(btn.dataset.lang, true);
         });
+    });
 
-        dropZone.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer;
-            const files = Array.from(dt.files);
-            if (files.length > 0) {
-                processFiles(files);
-            }
-        });
-
-        function processFiles(files) {
-            const csvFiles = files.filter(f => f.name.endsWith('.csv'));
-
-            if (csvFiles.length === 0) {
-                alert(window.t('onlyCsvAlert'));
-                return;
-            }
-
-            csvFiles.forEach(file => {
-                uploadFileAutomatically(file);
-            });
+    window.addEventListener("storage", (event) => {
+        if (event.key === "agri_language" && event.newValue) {
+            applyLanguage(event.newValue, false);
         }
+    });
 
-        window._fileCache = window._fileCache || {};
-        window._lastPreviewed = null;
+    window.addEventListener("appLanguageChanged", (event) => {
+        const lang = event.detail && event.detail.language;
+        if (lang && lang !== currentLanguage) {
+            applyLanguage(lang, false);
+        }
+    });
 
-        function uploadFileAutomatically(file) {
-            window._fileCache[file.name] = file;
+    const demoData = {
+        harvest: {
+            amount: 4850000,
+            quantity: 1240,
+            avgPrice: 38.7,
+            months: ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย."],
+            trend: [145, 190, 220, 180, 260, 245],
+            crops: { "ธัญพืช": 52, "ผลไม้": 31, "ผัก": 17 },
+            cooperatives: {"สหกรณ์ A": 310, "สหกรณ์ B": 275, "สหกรณ์ C": 220, "สหกรณ์ D": 180, "สหกรณ์ E": 155}
+        },
+        sales: {
+            amount: 7320000,
+            quantity: 980,
+            shipping: 485000,
+            months: ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย."],
+            trend: [980, 1120, 1060, 1280, 1410, 1470],
+            customers: {"ห้างค้าปลีก": 42, "ตลาดส่งออก": 33, "สหกรณ์เครือข่าย": 25},
+            shipment: {
+                modes: ["รถยนต์","เรือ"],
+                completed: [62, 24],
+                pending: [15, 8]
+            }
+        }
+    };
 
-            const now = new Date();
-            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-            const fileSize = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+    function money(v) {
+        return "฿" + Number(v || 0).toLocaleString("en-US");
+    }
 
-            const tr = document.createElement('tr');
-            tr.dataset.fileName = file.name;
-            
-            tr.innerHTML = `
-                <td class="file-cell" style="cursor: pointer;" onclick="previewFileByName('${escapeJs(file.name)}', '')">
-                    <span class="file-icon" style="cursor: pointer;" title="${window.t('preview')}">
-                        <svg viewBox="0 0 24 24"><path d="M5 3h10l4 4v14H5z"/><path d="M15 3v5h4"/></svg>
-                    </span>
-                    <span class="file-link" data-i18n-title="preview" title="${window.t('preview')} (${file.name})">${escapeHtml(file.name)}</span>
-                </td>
-                <td>${fileSize}</td>
-                <td><span class="badge badge-progress" data-i18n="progress">${window.t('progress')}</span></td>
-                <td>
-                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-                        <span>${timeStr}</span>
-                        <span class="action-area" style="display: inline-flex; align-items: center; gap: 6px;"></span>
-                    </div>
-                </td>
-            `;
-            
-            const emptyRow = document.getElementById('emptyRow');
-            if (emptyRow) emptyRow.remove();
+    function setKpis(data) {
+        const h = data.harvest || demoData.harvest;
+        const s = data.sales || demoData.sales;
+        document.getElementById("harvestAmount").textContent = money(h.amount);
+        document.getElementById("harvestQuantity").textContent = Number(h.quantity || 0).toLocaleString("en-US") + " t";
+        document.getElementById("avgHarvestPrice").textContent = money(h.avgPrice);
+        document.getElementById("salesAmount").textContent = money(s.amount);
+        document.getElementById("salesQuantity").textContent = Number(s.quantity || 0).toLocaleString("en-US") + " t";
+        document.getElementById("shippingCost").textContent = money(s.shipping);
+    }
 
-            recentTableBody.insertBefore(tr, recentTableBody.firstChild);
-
-            const formData = new FormData();
-            formData.append('file', file);
-
-            fetch('/api/upload', {
-                method: 'POST',
-                body: formData
-            })
-            .then(res => {
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                return res.json();
-            })
-            .then(data => {
-                tr.dataset.s3Key = data.key;
-                const badge = tr.querySelector('.badge');
-                if (badge) {
-                    badge.className = 'badge badge-success';
-                    badge.dataset.i18n = 'success';
-                    badge.textContent = window.t('success');
+    function chartOptions() {
+        return {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: "bottom",
+                    labels: { font: { size: 10 }, boxWidth: 10 }
                 }
-
-                const actionArea = tr.querySelector('.action-area');
-                if (actionArea) {
-                    actionArea.innerHTML = `
-                        <button class="btn-action btn-delete" title="${window.t('delete')}" data-i18n-title="delete" onclick="deleteFile('${data.key}', this)">${trashIconSvg}</button>
-                    `;
-                }
-            })
-            .catch(err => {
-                const badge = tr.querySelector('.badge');
-                if (badge) {
-                    badge.className = 'badge badge-error';
-                    badge.dataset.i18n = 'failed';
-                    badge.textContent = window.t('failed');
-                }
-
-                const actionArea = tr.querySelector('.action-area');
-                if (actionArea) {
-                    actionArea.innerHTML = `
-                        <button class="btn-action btn-delete" title="${window.t('delete')}" data-i18n-title="delete" onclick="this.closest('tr').remove(); checkEmptyTable();">${trashIconSvg}</button>
-                    `;
-                }
-            });
-        }
-
-        // Event delegation สำหรับคลิกดูตัวอย่างไฟล์ในตาราง
-        recentTableBody.addEventListener('click', function(e) {
-            if (e.target.closest('.btn-delete, .action-area')) return;
-
-            const target = e.target.closest('.file-link, .file-icon, td:first-child');
-            if (!target) return;
-            const tr = target.closest('tr');
-            if (!tr) return;
-            const fileName = tr.dataset.fileName;
-            const s3Key = tr.dataset.s3Key;
-            if (fileName) {
-                previewFileByName(fileName, s3Key);
-            }
-        });
-
-        function escapeJs(str) {
-            return (str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-        }
-
-        function previewFileByName(fileName, s3Key) {
-            const cleanName = (fileName || '').trim();
-            const cached = window._fileCache?.[cleanName];
-            if (cached) {
-                previewFile(cached, s3Key);
-            } else {
-                previewFile(null, s3Key || cleanName);
-            }
-        }
-
-        // ฟังก์ชันอ่านไฟล์ CSV และเรนเดอร์ใน Modal Pop-up
-        function previewFile(file, s3Key) {
-            const fileName = file ? file.name : (s3Key ? s3Key.split('/').pop() : '');
-            const cleanName = (fileName || '').trim();
-            window._lastPreviewed = { file, s3Key, fileName: cleanName };
-
-            // 1. ถ้ามี File object สดใหม่ในเครื่อง (FileReader)
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    renderCSVTable(file.name, e.target.result);
-                };
-                reader.readAsText(file);
-                return;
-            }
-
-            // 2. ถ้ามีแคชไฟล์ในหน่วยความจำ
-            if (window._fileCache && window._fileCache[cleanName]) {
-                previewFile(window._fileCache[cleanName]);
-                return;
-            }
-
-            // 3. ถ้าต้องดึงจาก AWS S3 หรือ API
-            if (s3Key) {
-                const apiBase = (window.location.port === '3000' || window.location.pathname.startsWith('/api')) ? '' : 'http://localhost:3000';
-                fetch(`${apiBase}/api/file-content?key=${encodeURIComponent(s3Key)}`)
-                    .then(res => {
-                        if (!res.ok) throw new Error('Cannot fetch S3');
-                        return res.text();
-                    })
-                    .then(csvText => {
-                        renderCSVTable(cleanName, csvText);
-                    })
-                    .catch(() => alert(window.t('fetchError')));
-            }
-        }
-
-        function renderCSVTable(fileName, csvContent) {
-            window._lastCSVContent = { fileName, csvContent };
-            const rows = parseCSV(csvContent);
-            if (!rows.length) {
-                document.getElementById("modalTitle").innerText = fileName;
-                document.getElementById("modalBody").innerHTML = `<p style="color: #666; text-align: center; padding: 20px;">${window.t('fileEmpty')}</p>`;
-                document.getElementById("fileModal").classList.add("active");
-                return;
-            }
-
-            const headerRow = rows[0];
-            const dataRows = rows.slice(1);
-            const maxSampleRows = 50;
-            const displayRows = dataRows.slice(0, maxSampleRows);
-            const totalInfo = dataRows.length > maxSampleRows ? `(${window.t('ofTotal')} ${dataRows.length.toLocaleString()} ${window.t('rows')})` : '';
-
-            let infoBar = `
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding: 10px 14px; background: rgba(215, 229, 182, 0.45); border-radius: 8px; font-size: 0.88rem; color: #4A5835;">
-                    <div>📊 <strong>${window.t('sampleDataPrefix')}</strong> ${displayRows.length} ${window.t('firstRows')} ${totalInfo}</div>
-                    <div>📋 <strong>${headerRow.length}</strong> ${window.t('columns')}</div>
-                </div>
-            `;
-
-            let tableHTML = infoBar + '<div style="overflow-x: auto; max-height: 55vh;"><table class="csv-table"><thead><tr>';
-            headerRow.forEach((col, idx) => {
-                tableHTML += `<th>#${idx + 1} ${escapeHtml(col.trim())}</th>`;
-            });
-            tableHTML += '</tr></thead><tbody>';
-
-            displayRows.forEach((row, rowIndex) => {
-                tableHTML += '<tr>';
-                row.forEach(cell => {
-                    tableHTML += `<td>${escapeHtml((cell || '').trim())}</td>`;
-                });
-                tableHTML += '</tr>';
-            });
-
-            tableHTML += '</tbody></table></div>';
-
-            document.getElementById("modalTitle").innerText = `${window.t('modalFilePrefix')}${fileName}`;
-            document.getElementById("modalBody").innerHTML = tableHTML;
-            document.getElementById("fileModal").classList.add("active");
-        }
-
-        function parseCSV(text) {
-            if (!text) return [];
-            const cleanText = text.replace(/^\uFEFF/, '');
-            const lines = cleanText.split(/\r\n|\n/).filter(line => line.trim().length > 0);
-            return lines.map(line => {
-                const row = [];
-                let insideQuotes = false;
-                let entry = '';
-                for (let i = 0; i < line.length; i++) {
-                    const char = line[i];
-                    if (char === '"') {
-                        insideQuotes = !insideQuotes;
-                    } else if (char === ',' && !insideQuotes) {
-                        row.push(entry.trim());
-                        entry = '';
-                    } else {
-                        entry += char;
-                    }
-                }
-                row.push(entry.trim());
-                return row;
-            });
-        }
-
-        function escapeHtml(text) {
-            if (text === null || text === undefined) return '';
-            const div = document.createElement('div');
-            div.innerText = String(text);
-            return div.innerHTML;
-        }
-
-        function closeModal() {
-            document.getElementById("fileModal").classList.remove("active");
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById("fileModal");
-            if (event.target === modal) {
-                closeModal();
+            },
+            scales: {
+                y: { beginAtZero: true, grid: { color: "#EEE9DE" }, ticks: { font: { size: 9 } } },
+                x: { grid: { display: false }, ticks: { font: { size: 9 } } }
             }
         };
+    }
 
-        window.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeModal();
-            }
+    function destroyCharts() {
+        Object.values(charts).forEach(c => c && c.destroy());
+        charts = {};
+    }
+
+    function updateChartsLanguage() {
+        if (!window.Chart || !Object.keys(charts).length) return;
+        const data = window.dashboardData || demoData;
+        destroyCharts();
+        createCharts(data);
+    }
+
+    function createCharts(data) {
+        if (!window.Chart) return;
+        destroyCharts();
+
+        const h = data.harvest || demoData.harvest;
+        const s = data.sales || demoData.sales;
+        const lang = currentLanguage;
+
+        const monthLabels = lang === "en"
+            ? ["Jan","Feb","Mar","Apr","May","Jun"]
+            : (h.months || demoData.harvest.months);
+
+        charts.harvestTrend = new Chart(document.getElementById("harvestTrendChart"), {
+            type: "line",
+            data: {
+                labels: monthLabels,
+                datasets: [{
+                    label: lang === "en" ? "Harvest Quantity (t)" : "ปริมาณรับซื้อ (ตัน)",
+                    data: h.trend,
+                    borderColor: "#805532",
+                    backgroundColor: "rgba(215,229,182,.35)",
+                    tension: .35,
+                    fill: true
+                }]
+            },
+            options: chartOptions()
         });
 
-        // Re-render open modal on language change
-        window.addEventListener('appLanguageChanged', () => {
-            const modal = document.getElementById("fileModal");
-            if (modal && modal.classList.contains("active") && window._lastCSVContent) {
-                renderCSVTable(window._lastCSVContent.fileName, window._lastCSVContent.csvContent);
-            }
+        charts.harvestCrop = new Chart(document.getElementById("harvestCropChart"), {
+            type: "doughnut",
+            data: {
+                labels: lang === "en" ? ["Grains","Fruits","Vegetables"] : ["ธัญพืช","ผลไม้","ผัก"],
+                datasets: [{ data: Object.values(h.crops), backgroundColor: ["#596440","#927457","#D7E5B6"] }]
+            },
+            options: { ...chartOptions(), scales: {} }
         });
 
-        // Confirmation on Sign Out
-        const accountBtn = document.getElementById("accountBtn");
-        if (accountBtn) {
-            accountBtn.addEventListener("click", (e) => {
-                if (!confirm(window.t("logoutConfirm"))) {
-                    e.preventDefault();
-                }
-            });
-        }
+        charts.cooperatives = new Chart(document.getElementById("topCooperativesChart"), {
+            type: "bar",
+            data: {
+                labels: lang === "en" ? ["Co-op A","Co-op B","Co-op C","Co-op D","Co-op E"] : Object.keys(h.cooperatives),
+                datasets: [{
+                    label: lang === "en" ? "Quantity (t)" : "ปริมาณ (ตัน)",
+                    data: Object.values(h.cooperatives),
+                    backgroundColor: "#927457",
+                    borderRadius: 4
+                }]
+            },
+            options: chartOptions()
+        });
 
-        function deleteFile(s3Key, btnElement) {
-            if (!confirm(window.t('deleteConfirm'))) return;
+        charts.salesTrend = new Chart(document.getElementById("salesTrendChart"), {
+            type: "line",
+            data: {
+                labels: lang === "en" ? ["Jan","Feb","Mar","Apr","May","Jun"] : (s.months || demoData.sales.months),
+                datasets: [{
+                    label: lang === "en" ? "Net Sales (THB)" : "ยอดขายสุทธิ (บาท)",
+                    data: s.trend,
+                    borderColor: "#596440",
+                    backgroundColor: "rgba(215,229,182,.35)",
+                    tension: .35,
+                    fill: true
+                }]
+            },
+            options: chartOptions()
+        });
 
-            btnElement.disabled = true;
-            btnElement.style.opacity = '0.5';
+        charts.customer = new Chart(document.getElementById("customerTypeChart"), {
+            type: "doughnut",
+            data: {
+                labels: lang === "en" ? ["Retail","Export Market","Network Cooperatives"] : ["ห้างค้าปลีก","ตลาดส่งออก","สหกรณ์เครือข่าย"],
+                datasets: [{ data: Object.values(s.customers), backgroundColor: ["#596440","#927457","#D7E5B6"] }]
+            },
+            options: { ...chartOptions(), scales: {} }
+        });
 
-            fetch('/api/delete', {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ key: s3Key })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    const tr = btnElement.closest('tr');
-                    tr.remove();
-                    checkEmptyTable();
-                } else {
-                    alert(window.t('deleteError') + ': ' + data.message);
-                    btnElement.disabled = false;
-                    btnElement.style.opacity = '1';
-                }
-            })
-            .catch(err => {
-                console.error('Delete error:', err);
-                alert(window.t('deleteError'));
-                btnElement.disabled = false;
-                btnElement.style.opacity = '1';
-            });
-        }
-
-        function filterFiles() {
-            const input = document.getElementById("fileSearchInput");
-            if (!input) return;
-            const filter = input.value.toLowerCase();
-            const rows = recentTableBody.getElementsByTagName("tr");
-
-            for (let i = 0; i < rows.length; i++) {
-                const firstTd = rows[i].getElementsByTagName("td")[0];
-                if (firstTd) {
-                    const fileNameText = firstTd.textContent || firstTd.innerText;
-                    if (fileNameText.toLowerCase().indexOf(filter) > -1) {
-                        rows[i].style.display = "";
-                    } else {
-                        rows[i].style.display = "none";
+        charts.shipment = new Chart(document.getElementById("shipmentStatusChart"), {
+            type: "bar",
+            data: {
+                labels: lang === "en" ? ["Truck","Ship"] : ["รถยนต์","เรือ"],
+                datasets: [
+                    {
+                        label: lang === "en" ? "Completed" : "จัดส่งแล้ว",
+                        data: s.shipment.completed,
+                        backgroundColor: "#596440"
+                    },
+                    {
+                        label: lang === "en" ? "Pending" : "รอดำเนินการ",
+                        data: s.shipment.pending,
+                        backgroundColor: "#927457"
                     }
+                ]
+            },
+            options: {
+                ...chartOptions(),
+                scales: {
+                    x: { stacked: true, grid: { display: false } },
+                    y: { stacked: true, beginAtZero: true }
                 }
             }
-        }
+        });
+    }
 
-        function renderEmptyState() {
-            if (!recentTableBody.querySelector('tr:not(#emptyRow)')) {
-                recentTableBody.innerHTML = `
-                    <tr id="emptyRow">
-                        <td colspan="4" style="text-align: center; color: #786C5F; padding: 36px 16px; font-size: 0.95rem;">
-                            <span data-i18n="noUploads">${window.t('noUploads')}</span>
-                        </td>
-                    </tr>
-                `;
+    async function loadDashboard() {
+        try {
+            // 1. ดึงค่าจากตัวกรองทั้ง 3 ตัวบนหน้าเว็บ
+            const filterDate = document.getElementById("filterDate").value;
+            const filterWarehouse = document.getElementById("filterWarehouse").value;
+            const filterCrop = document.getElementById("filterCrop").value;
+
+            // 2. แนบค่าตัวกรองไปกับ URL API
+            const url = `/api/dashboard?date=${filterDate}&warehouse=${filterWarehouse}&crop=${filterCrop}`;
+            
+            const response = await fetch(url, {
+                headers: { "Accept": "application/json" },
+                cache: "no-store"
+            });
+
+            if (response.ok) {
+                const cloudData = await response.json();
+                
+                // 3. นำข้อมูลที่ผ่านการกรองแล้วมาอัปเดตหน้าจอ
+                window.dashboardData = cloudData;
+                setKpis(cloudData);        
+                createCharts(cloudData);   
             }
+        } catch (error) {
+            console.error("ไม่สามารถเชื่อมต่อ Cloud API ได้:", error);
         }
+    }
 
-        function checkEmptyTable() {
-            if (!recentTableBody.querySelector('tr:not(#emptyRow)')) {
-                renderEmptyState();
-            }
+    function applyFilters() {
+        loadDashboard();
+    }
+
+    document.querySelectorAll("#filterDate,#filterWarehouse,#filterCrop")
+        .forEach(el => el.addEventListener("change", applyFilters));
+
+    document.addEventListener("DOMContentLoaded", () => {
+        applyLanguage(currentLanguage);
+        loadDashboard();
+        if (window.lucide) {
+            lucide.createIcons();
         }
-
-        function loadInitialFiles() {
-            renderEmptyState();
-        }
-
-        loadInitialFiles();
+    });
     </script>
 </body>
 

@@ -57,7 +57,7 @@ flowchart TD
 
 ---
 
-## โครงสร้างโปรเจกต์
+## Project Structure
 
 ```text
 CLOUD/
@@ -81,7 +81,7 @@ CLOUD/
 ├── docs/                    # คู่มือสถาปัตยกรรม, Cloud Flow และ API Contract
 ├── frontend/                # Unified Web Application
 │   ├── index.html           # หน้าเข้าสู่ระบบ (DynamoDB Auth)
-│   ├── dashboard.html       # ศูนย์อัปโหลดข้อมูล (S3 Ingestion & CSV Preview)
+│   ├── inventory.html       # คลังสินค้า & ศูนย์อัปโหลดข้อมูล (S3 Ingestion & CSV Preview)
 │   ├── agent.html           # ผู้ช่วย AI วิเคราะห์ข้อมูลและวาดกราฟ
 │   ├── i18next.min.js       # Offline UMD bundle ของ i18next library
 │   ├── translations.js      # Unified i18n Translation Engine & Bilingual Dictionary (TH/EN)
@@ -133,10 +133,10 @@ setup.bat
 # LLM Provider (Qwen ผ่าน Groq API)
 LLM_PROVIDER=qwen
 GROQ_MODEL=qwen/qwen3.8-27b
-GROQ_API_KEY=gsk_...
+GROQ_API_KEY=...
 
 # Amazon RDS PostgreSQL
-DATABASE_URL=postgresql+psycopg://agri_dwh_user:agri_dwh_pass@agri-dwh-dbmaster.cjoywc4cd9ok.us-east-1.rds.amazonaws.com:5432/postgres?sslmode=require
+DATABASE_URL=postgresql+psycopg://<USER>:<PASSWORD>@<ENDPOINT>:5432/<DB_NAME>?sslmode=require
 DATABASE_SCHEMA=data_warehouse
 ```
 
